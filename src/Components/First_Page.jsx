@@ -4,8 +4,8 @@ import Search_Icon from "../assets/Search_Icon.svg"
 import logo from "../assets/swiggy_logo_white.png";
 import veggies from "../assets/Veggies_new.png";
 import sushi from "../assets/Sushi_replace.png";
-import Card_2 from "../assets/card_2.png";
-import Card_3 from "../assets/card_3.png";
+import Card_2 from "../assets/Card_2.png";
+import Card_3 from "../assets/Card_3.png";
 import Location_Icon from "../assets/Location_Icon.svg"
 import Aerrow_Icon from "../assets/Aerrow_Down_Icon.svg"
 

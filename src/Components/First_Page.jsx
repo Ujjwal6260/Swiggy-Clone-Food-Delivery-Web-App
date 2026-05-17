@@ -4,8 +4,8 @@ import Search_Icon from "../assets/Search_Icon.svg"
 import logo from "../assets/swiggy_logo_white.png";
 import veggies from "../assets/Veggies_new.png";
 import sushi from "../assets/Sushi_replace.png";
-import card2 from "../assets/card_2.png";
-import card3 from "../assets/card_3.png";
+import Card_2 from "../assets/card_2.png";
+import Card_3 from "../assets/card_3.png";
 import Location_Icon from "../assets/Location_Icon.svg"
 import Aerrow_Icon from "../assets/Aerrow_Down_Icon.svg"
 
@@ -75,8 +75,8 @@ function First_Page() {
 
             <div className="flex justify-center mt-10 gap-4">
                 <img onClick={() => nav('/restaurents')} className="h-[40vh] cursor-pointer" src={Card_1} />
-                <img onClick={() => nav('/restaurents')} className="h-[40vh] cursor-pointer" src={card2} />
-                <img onClick={() => nav('/restaurents')} className="h-[40vh] cursor-pointer" src={card3} />
+                <img onClick={() => nav('/restaurents')} className="h-[40vh] cursor-pointer" src={Card_2} />
+                <img onClick={() => nav('/restaurents')} className="h-[40vh] cursor-pointer" src={Card_3} />
             </div>
         </div>
     );

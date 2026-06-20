@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom"
+import { CDN } from "../Utilis/Constants";
 
-const CDN= import.meta.env.VITE_IMG_CDN
+// const CDN= import.meta.env.VITE_IMG_CDN
 
 function FoodSuggestion({data})
 {

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import Rating_Icon from "../assets/Rating_Icon.svg"
+import { CDN } from "../Utilis/Constants";
 
 function RestaurentCard({data, size, cdn})
 {

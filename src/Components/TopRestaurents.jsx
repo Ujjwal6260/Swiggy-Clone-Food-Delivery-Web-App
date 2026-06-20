@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import RestaurentCard from "./RestaurentCard"
-const CDN = import.meta.env.VITE_IMG_CDN
+import { CDN } from "../Utilis/Constants";
+// const CDN = import.meta.env.VITE_IMG_CDN
 function TopReastaurents({data})
 {
     const{title, cards} = data 

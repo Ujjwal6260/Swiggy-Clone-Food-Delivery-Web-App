@@ -10,9 +10,7 @@ import { NavLink } from "react-router-dom";
 
 function Navvar() {
 
-    const location = useSelector(
-        (state) => state.location?.data?.location
-    );
+    const location = useSelector(store => store.location);
 
     return (
         <header className="w-full bg-white shadow-md">
@@ -54,7 +52,7 @@ function Navvar() {
                                 truncate
                             "
                         >
-                            {location || "Fetching location..."}
+                            {location.data.location && location.data.location.slice(0,30) + "..."}
                         </p>
 
                         <span className="text-[#FF5200] text-lg">

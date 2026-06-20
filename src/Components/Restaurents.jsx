@@ -21,292 +21,367 @@ import { addHomeData } from "../Utilis/CacheSlice";
 
 function Restaurents() {
 
-  const [suggestionData, setSuggestionData] = useState({});
-  const [topRestaurents, setTopRestaurents] = useState({});
-  const [restaurentInArea, setRestaurentInArea] = useState({});
+
+  const [suggestionData, setSuggestionData] = useState({
+    title: "",
+    card: []
+  });
+
+
+  const [topRestaurents, setTopRestaurents] = useState({
+    title: "",
+    cards: []
+  });
+
+
+  const [restaurentInArea, setRestaurentInArea] = useState({
+    title: "",
+    cards: []
+  });
+
+
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
 
   const location = useSelector(store => store.location);
   const cacheData = useSelector(store => store.cache.home);
 
+
   const dispatch = useDispatch();
 
 
-  const filterData = (apiData) => {
-
-    const cards = apiData?.data?.cards;
-
-    if (!cards) return;
 
 
-    // What's on your mind
 
-    const suggestion = cards.find(
-      item =>
-        item?.card?.card?.imageGridCards
-    );
+  function filterData(apiData) {
 
+    let foodArray = [];
+    let topBrandsArray = [];
+    let areaRestaurantsArray = [];
+
+
+    const cards = apiData?.data?.cards || [];
+
+
+    foodArray =
+      cards
+        ?.find(
+          (item) =>
+            item?.card?.card?.gridElements?.infoWithStyle?.info
+        )
+        ?.card?.card?.gridElements?.infoWithStyle?.info || [];
+
+
+    let restaurantSections = [];
+
+
+    function findRestaurants(obj) {
+
+      if (!obj || typeof obj !== "object") return;
+
+
+      if (obj?.gridElements?.infoWithStyle?.restaurants) {
+
+        restaurantSections.push(
+          obj.gridElements.infoWithStyle.restaurants
+        );
+
+      }
+
+
+      Object.values(obj).forEach(findRestaurants);
+    }
+
+
+    findRestaurants(apiData);
+
+
+
+    if (restaurantSections.length > 0) {
+
+      topBrandsArray =
+        restaurantSections[0].map(
+          (item) => item.info
+        );
+
+
+      areaRestaurantsArray =
+        restaurantSections[
+          restaurantSections.length - 1
+        ].map(
+          (item) => item.info
+        );
+
+    }
 
     setSuggestionData({
-
-      title:
-        suggestion?.card?.card?.header?.title ||
-        "What's on your mind?",
-
-      card:
-        suggestion
-        ?.card
-        ?.card
-        ?.imageGridCards
-        ?.info || []
-
+      title: "What's on your mind?",
+      card: foodArray
     });
 
 
-
-    // Top Restaurants
-
-    const restaurantCards = cards.find(
-      item =>
-        item
-        ?.card
-        ?.card
-        ?.gridElements
-        ?.infoWithStyle
-        ?.restaurants
-    );
-
-
-    const restaurants =
-      restaurantCards
-      ?.card
-      ?.card
-      ?.gridElements
-      ?.infoWithStyle
-      ?.restaurants
-      ?.map(item => item.info) || [];
-
-
     setTopRestaurents({
-
-      title:
-        restaurantCards
-        ?.card
-        ?.card
-        ?.header
-        ?.title
-        ||
-        "Top restaurant chains",
-
-      cards: restaurants
-
+      title: "Top restaurant chains",
+      cards: topBrandsArray
     });
 
 
     setRestaurentInArea({
-
-      title:
-      "Restaurants in your area",
-
-      cards: restaurants
-
+      title: "Restaurants in your area",
+      cards: areaRestaurantsArray
     });
 
-  };
 
+    setLoading(false);
 
+  }
 
-useEffect(() => {
 
 
-if(cacheData){
 
-  filterData(cacheData);
-  return;
 
-}
 
 
-if(location?.data?.lat){
 
+  useEffect(() => {
 
-const API = 
-`https://www.swiggy.com/dapi/restaurants/list/v5?lat=${location.data.lat}&lng=${location.data.lon}&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING`;
 
+    async function getData() {
 
 
-fetch(API)
+      try {
 
-.then(response => {
 
-if(!response.ok){
-throw new Error("API Failed");
-}
 
-return response.json();
+        if (cacheData) {
 
-})
 
+          filterData(cacheData);
 
-.then(data => {
+          return;
 
-dispatch(addHomeData(data));
 
-filterData(data);
+        }
 
-})
 
 
-.catch(error => {
 
-console.log("Swiggy API Error:",error);
+        if (!location?.data?.lat) {
 
-setError(true);
+          return;
 
-});
+        }
 
 
-}
 
 
-},[location,cacheData,dispatch]);
 
+        const API = `https://www.swiggy.com/dapi/restaurants/list/v5?lat=28.7041&lng=77.1025&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING`
 
 
 
+        const response = await fetch(API);
 
-if(error){
 
-return(
 
-<div>
+        if (!response.ok) {
 
-<Navvar/>
 
-<h2 className="text-center mt-20 text-xl">
+          throw new Error("API Error");
 
-Something went wrong. Please try again.
 
-</h2>
+        }
 
-</div>
 
-)
 
-}
 
+        const json = await response.json();
 
 
 
-return (
+        console.log("API DATA =====>", json);
 
-<div>
 
 
-<Navvar/>
+        dispatch(addHomeData(json));
 
 
-<Routes>
 
-<Route 
-path="corporate" 
-element={<SwiggyCorporate/>}
-/>
+        filterData(json);
 
-<Route 
-path="search" 
-element={<Search/>}
-/>
 
-<Route 
-path="offers" 
-element={<Offers/>}
-/>
 
-<Route 
-path="help" 
-element={<Help/>}
-/>
 
-<Route 
-path="signin" 
-element={<SignIn/>}
-/>
+      }
 
-<Route 
-path="cart" 
-element={<Cart/>}
-/>
 
-</Routes>
+      catch (err) {
 
 
+        console.log("ERROR =====>", err);
 
 
-{
-suggestionData?.card?.length > 0 ?
+        setError(true);
 
-<div>
 
+        setLoading(false);
 
-<FoodSuggestion 
-data={suggestionData}
-/>
 
+      }
 
-<hr className="
-border border-gray-200 
-w-[80vw] 
-mx-auto 
+
+
+    }
+
+
+
+    getData();
+
+
+
+  }, [location, cacheData, dispatch]);
+
+
+
+
+
+
+
+
+
+  if (error) {
+
+
+    return (
+
+      <div>
+
+        <Navvar />
+
+        <h2 className="text-center mt-20 text-xl">
+
+          Something went wrong. Please try again.
+
+        </h2>
+
+      </div>
+
+    )
+
+  }
+
+
+
+
+
+
+
+
+  if (loading) {
+
+
+    return (
+
+      <div>
+
+        <Navvar />
+
+
+        <div className="
+h-screen
+flex
+justify-center
+items-center
+">
+
+          <Loder />
+
+        </div>
+
+
+      </div>
+
+
+    )
+
+
+  }
+
+
+
+
+
+
+
+
+
+  return (
+
+    <div>
+
+
+      <Navvar />
+
+
+
+
+      <Routes>
+
+
+        <Route path="corporate" element={<SwiggyCorporate />} />
+
+        <Route path="search" element={<Search />} />
+
+        <Route path="offers" element={<Offers />} />
+
+        <Route path="help" element={<Help />} />
+
+        <Route path="signin" element={<SignIn />} />
+
+        <Route path="cart" element={<Cart />} />
+
+
+      </Routes>
+
+
+
+
+
+      <FoodSuggestion data={suggestionData} />
+
+
+      <hr className="
+border border-gray-200
+w-[80vw]
+mx-auto
 mt-10"
-/>
+      />
 
 
 
-<TopReastaurents 
-data={topRestaurents}
-/>
+      <TopReastaurents data={topRestaurents} />
 
 
 
-<hr className="
-border border-gray-200 
-w-[80vw] 
-mx-auto 
+      <hr className="
+border border-gray-200
+w-[80vw]
+mx-auto
 mt-10"
-/>
+      />
 
 
 
-<RestaurentInArea
-data={restaurentInArea}
-/>
+      {<RestaurentInArea data={restaurentInArea} />}
 
 
 
-</div>
 
+    </div>
 
-:
+  )
 
-
-<div className="
-h-screen 
-flex 
-justify-center 
-items-center"
->
-
-<Loder/>
-
-</div>
-
-}
-
-
-</div>
-
-)
 
 }
 

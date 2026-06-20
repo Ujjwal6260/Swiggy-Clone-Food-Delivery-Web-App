@@ -4,6 +4,7 @@ import Cart_Icon from "../assets/Cart_Icon.svg";
 import help_Icon from "../assets/help_Icon.svg";
 import Search_icon from "../assets/Search_Icon.svg";
 import offer_icon from "../assets/Offer_Icon.svg";
+import logo from "../assets/logo.svg";
 
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
@@ -32,7 +33,7 @@ function Navvar() {
 
                     {/* LOGO */}
                     <img
-                        src="/src/assets/logo.svg"
+                        src={logo}
                         alt="logo"
                         className="w-[46px] h-[70px] cursor-pointer"
                     />
@@ -52,7 +53,7 @@ function Navvar() {
                                 truncate
                             "
                         >
-                            {location.data.location && location.data.location.slice(0,30) + "..."}
+                            {location.data.location && location.data.location.slice(0, 30) + "..."}
                         </p>
 
                         <span className="text-[#FF5200] text-lg">
